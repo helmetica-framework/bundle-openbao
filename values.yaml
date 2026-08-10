@@ -39,11 +39,9 @@ openbao:
     authDelegator:
       enabled: false
     updateStrategyType: RollingUpdate
-    extraSecretEnvironmentVars:
-      - envName: SEAL_SECRET
-        # needs to have the same prefix as the release
-        secretName: "dev-seal"
-        secretKey: SEAL_SECRET
+    extraVolumes:
+      - type: secret
+        name: dev-seal
     # Ingress holds the configuration for the ingress.
     ingress:
       '#enabled':
@@ -98,7 +96,7 @@ openbao:
 
           seal "static" {
             current_key_id = "20250606-1"
-            current_key = "env://SEAL_SECRET"
+            current_key = "file:///openbao/userconfig/dev-seal/SEAL_SECRET"
           }
     networkPolicy:
       enabled: false
