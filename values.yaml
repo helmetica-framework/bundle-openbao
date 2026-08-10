@@ -1,3 +1,89 @@
 backup:
   # backup retention in days
   retention: 6
+
+'#openbao':
+  export: false
+openbao:
+  global:
+    '#openshift':
+      description: |
+        If you are deploying to OpenShift, set this to true. This will enable the OpenShift specific configuration for the OpenBao chart.
+      export: true
+    openshift: true
+  csi:
+    enabled: false
+    agent:
+      enabled: false
+  # ui determines if the UI is enabled or not. If you want to disable the UI, set this to false.
+  ui:
+    enabled: true
+  injector:
+    enabled: false
+  server:
+    authDelegator:
+      enabled: false
+    updateStrategyType: RollingUpdate
+    extraSecretEnvironmentVars:
+      - envName: SEAL_SECRET
+        # needs to have the same prefix as the release
+        secretName: "dev-seal"
+        secretKey: SEAL_SECRET
+    # Ingress holds the configuration for the ingress.
+    ingress:
+      '#enabled':
+        description: |
+          If you want to enable the ingress, set this to true.
+        export: true
+      enabled: true
+      className: "openshift-default"
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-production
+      '#hosts':
+        description: |
+          The hosts for the ingress. This should be a list of hosts.
+        export: true
+        items:
+          # The host name for the ingress. Should match a TLS hosts entry if not under the clusters app domain.
+          host: ""
+      hosts: []
+      '#tls':
+        description: |
+          The TLS configuration for the ingress. This should be a list of TLS configurations.
+        export: true
+        items:
+          # The host names for the certificate. Should be empty if using the clusters app domain.
+          # Should match a hosts entry if not under the clusters app domain.
+          hosts: [""]
+          # The name of the secret that contains the TLS certificate and key. Must not be empty.
+          secretName: ""
+      tls: []
+    ha:
+      enabled: true
+      raft:
+        enabled: true
+        config: |
+          ui = true
+
+          listener "tcp" {
+            tls_disable = 1
+            address = "[::]:8200"
+            cluster_address = "[::]:8201"
+          # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+          #telemetry {
+          #  unauthenticated_metrics_access = "true"
+          #}
+          }
+
+          storage "raft" {
+            path = "/openbao/data"
+          }
+
+          service_registration "kubernetes" {}
+
+          seal "static" {
+            current_key_id = "20250606-1"
+            current_key = "env://SEAL_SECRET"
+          }
+    networkPolicy:
+      enabled: false
