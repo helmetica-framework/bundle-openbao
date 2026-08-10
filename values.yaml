@@ -100,5 +100,19 @@ openbao:
             current_key_id = "20250606-1"
             current_key = "env://SEAL_SECRET"
           }
+
+          initialize "audit" {
+            request "enable-audit" {
+              operation = "update"
+              path = "sys/audit/stdout"
+              data = {
+                type = "file"
+                options = {
+                  file_path = "stdout"
+                }
+              }
+            }
+          }
+
     networkPolicy:
       enabled: false
