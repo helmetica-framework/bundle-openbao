@@ -22,3 +22,11 @@ release:
 	git push origin main
 	git tag v$(VERSION)
 	git push origin v$(VERSION)
+
+.PHONY: docs
+docs: ## Build the docs as they appear on docs.helmetica.io; fails on warnings
+	GOTOOLCHAIN=auto GOEXPERIMENT=jsonv2 go run github.com/helmetica-framework/rosarium@v0.1.0 preview .
+
+.PHONY: docs-serve
+docs-serve: ## Build the docs and serve them on http://localhost:2020
+	GOTOOLCHAIN=auto GOEXPERIMENT=jsonv2 go run github.com/helmetica-framework/rosarium@v0.1.0 preview . --serve :2020

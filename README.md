@@ -2,12 +2,11 @@
 
 A Helmetica bundle chart for OpenBao.
 
-## Seal Secret Bootstrap
+Documentation: https://docs.helmetica.io/bundle-openbao/
 
-This chart includes a Helm `post-install` hook job that creates a seal secret with a random value.
+## Development
 
-- The job only runs on install (not upgrade).
-- If the secret already exists, the job exits without changing it.
-- Configure it through `sealSecret.*` in `values.yaml`.
-
-Important: `sealSecret.name` must match `openbao.server.extraSecretEnvironmentVars[].secretName`.
+```console
+$ make build   # package the chart
+$ make docs    # preview the docs
+```

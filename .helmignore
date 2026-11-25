@@ -21,3 +21,5 @@
 .idea/
 *.tmproj
 .vscode/
+# Docs are published on docs.helmetica.io, not packaged.
+docs/
